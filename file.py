@@ -2,11 +2,14 @@ import time
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
+chan_led = 18
 chan1 = 17
 chan_reset = 27
 locked = True
 
+GPIO.setup(chan_led, GPIO.OUT)
 GPIO.setup(chan1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(chan_reset, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
@@ -16,10 +19,12 @@ cmd = "DEPLOY HERMES!!!\n"
 def lock():
 	global locked
 	locked = True
+	GPIO.output(chan_led, GPIO.LOW)
 
 def unlock():
 	global locked
 	locked = False
+	GPIO.output(chan_led, GPIO.HIGH)
 
 def button_pressed(param):
 	if locked:
