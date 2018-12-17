@@ -47,6 +47,8 @@ GPIO.add_event_callback(chan_reset, reset_pressed)
 GPIO.add_event_detect(chan1, GPIO.RISING, bouncetime=1300)
 GPIO.add_event_callback(chan1, button_pressed)
 
+lock()
+
 while True:
 	time.sleep(1)
 	print ""
