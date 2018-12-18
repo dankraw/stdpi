@@ -4,14 +4,23 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-chan_led = 18
-chan1 = 17
-chan_reset = 27
 locked = True
+bouncetime = 1500
+
+chan_led = 18
+chan_lock = 0
+
+chan_evo = 0
+chan_dev = 0
+chan_test = 0
+chan_prod = 0
+
+buttons = {chan_evo: "evo", chan_dev: "dev", chan_test: "test", chan_prod: "prod"}
 
 GPIO.setup(chan_led, GPIO.OUT)
-GPIO.setup(chan1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(chan_reset, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+for (button, name) in buttons:
+	GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 file_path = "/tmp/file"
 cmd = "DEPLOY HERMES!!!\n"
@@ -31,7 +40,11 @@ def button_pressed(param):
 		return
 	lock()
 	print "button %s pressed" % param
-	f = open(file_path, "a")
+	if param not in buttons:
+		print "error: unknown button %s" % (param)
+		return
+	filepath = file_path + buttons[param]
+	f = open(filepath, "a")
 	f.write(cmd)
 	f.close()
 
@@ -41,11 +54,12 @@ def reset_pressed(param):
 	print "reset"
 	unlock()
 
-GPIO.add_event_detect(chan_reset, GPIO.RISING, bouncetime=1300)
-GPIO.add_event_callback(chan_reset, reset_pressed)
+GPIO.add_event_detect(chan_lock, GPIO.RISING, bouncetime=bouncetime)
+GPIO.add_event_callback(chan_lock, reset_pressed)
 
-GPIO.add_event_detect(chan1, GPIO.RISING, bouncetime=1300)
-GPIO.add_event_callback(chan1, button_pressed)
+for (button, name) in buttons:
+	GPIO.add_event_detect(button, GPIO.RISING, bouncetime=bouncetime)
+	GPIO.add_event_callback(button, button_pressed)
 
 lock()
 
