@@ -7,13 +7,13 @@ GPIO.setwarnings(False)
 locked = True
 bouncetime = 1500
 
-chan_led = 18
-chan_lock = 0
+chan_led = 14
+chan_lock = 2
 
-chan_evo = 0
-chan_dev = 0
-chan_test = 0
-chan_prod = 0
+chan_evo = 3
+chan_dev = 4
+chan_test = 17
+chan_prod = 27
 
 buttons = {chan_evo: "evo", chan_dev: "dev", chan_test: "test", chan_prod: "prod"}
 
@@ -41,7 +41,7 @@ def button_pressed(param):
 	lock()
 	print "button %s pressed" % param
 	if param not in buttons:
-		print "error: unknown button %s" % (param)
+		print "error: unknown button %s" % param
 		return
 	filepath = file_path + buttons[param]
 	f = open(filepath, "a")
