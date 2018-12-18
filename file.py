@@ -51,9 +51,4 @@ lock()
 
 while True:
 	time.sleep(1)
-	print ""
-
-
-
-
-
+	pass # do nothing
